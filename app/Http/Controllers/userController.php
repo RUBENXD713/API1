@@ -8,6 +8,10 @@ use App\User;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail; 
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Http;
+use App\Mail\ValidacionMail;
 
 class userController extends Controller
 {
@@ -22,6 +26,7 @@ class userController extends Controller
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
         if($user->save()){
+            //Mail::to($request->email)->send(new ValidacionMail($user));
             return response()->json(["Usuario Registrado:"=>$user],200);
         }
         return response()->json("Error al registrar",400);
@@ -40,7 +45,7 @@ class userController extends Controller
             'email|password'=>['Datos Incorrectos']
         ]);
     }  
-       /* $token=$user->createToken($request->email, ['admin:admin'])->plainTextToken;*/ 
+       $token=$user->createToken($request->email, ['admin:admin'])->plainTextToken;
         return response()->json(["Validacion"=>1],201);
     }
 
@@ -49,5 +54,5 @@ class userController extends Controller
 
         return response()->json(["usuarios"=>$user]);
 
-    } //
+    } 
 }
